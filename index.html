@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Chuyển hướng an toàn</title>
+  <!-- fallback cho trường hợp người dùng tắt JS -->
+  <meta http-equiv="refresh" content="3;url=https://www.youtube.com/">
+  <style>
+    :root{--bg:#f7fafc;--card:#ffffff;--text:#111827}
+    html,body{height:100%;margin:0;font-family:Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;}
+    body{
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      background:linear-gradient(180deg,#eef2ff,#f8fafc);
+      color:var(--text);
+    }
+    .card{
+      background:var(--card);
+      padding:28px 36px;
+      border-radius:12px;
+      box-shadow:0 8px 24px rgba(16,24,40,0.08);
+      max-width:520px;
+      width:90%;
+      text-align:center;
+    }
+    .headline{
+      font-size:18px;
+      font-weight:600;
+      margin-bottom:12px;
+      letter-spacing:0.2px;
+    }
+    .typing{
+      font-family: "Courier New", monospace;
+      font-size:16px;
+      min-height:26px;
+      color:#374151;
+      display:inline-block;
+    }
+    .dots{
+      display:inline-block;
+      width:6px;
+      height:6px;
+      margin-left:8px;
+      border-radius:50%;
+      background:#94a3b8;
+      animation: blink 1s infinite;
+      vertical-align:middle;
+    }
+    @keyframes blink{
+      0%{opacity:1}
+      50%{opacity:0.15}
+      100%{opacity:1}
+    }
+    .small{
+      margin-top:14px;
+      font-size:13px;
+      color:#6b7280;
+    }
+    .btn{
+      display:inline-block;
+      margin-top:16px;
+      padding:8px 14px;
+      border-radius:8px;
+      background:#111827;
+      color:#fff;
+      text-decoration:none;
+      font-size:14px;
+    }
+  </style>
+</head>
+<body>
+  <div class="card" role="main" aria-live="polite">
+    <div class="headline">Xin chào — bạn sẽ được chuyển hướng</div>
+    <div>
+      <span class="typing" id="typing"></span><span class="dots" aria-hidden="true"></span>
+    </div>
+    <div class="small">Nếu trình duyệt không tự chuyển, bấm nút bên dưới.</div>
+    <a class="btn" id="manualBtn" href="https://www.youtube.com/" target="_blank" rel="noopener">Đi đến YouTube</a>
+  </div>
+
+  <script>
+    // Nội dung sẽ "chạy" — bạn có thể thay chữ ở đây
+    const texts = [
+      "Chuẩn bị chuyển hướng...",
+      "Cảm ơn bạn đã chờ...",
+      "Đang mở youtube.com"
+    ];
+
+    const typingEl = document.getElementById('typing');
+    const manualBtn = document.getElementById('manualBtn');
+
+    // Gõ chữ từng ký tự (typing effect)
+    (async function typeAndRedirect(){
+      for (let i = 0; i < texts.length; i++) {
+        await typeText(texts[i]);
+        // giữ 600ms sau khi gõ xong
+        await wait(600);
+        // xóa dần trước khi gõ câu tiếp theo
+        await eraseText();
+        await wait(200);
+      }
+      // redirect an toàn
+      // dùng replace để không lưu lịch sử (tuỳ bạn)
+      window.location.replace("https://www.youtube.com/");
+    })();
+
+    function typeText(str){
+      return new Promise(resolve => {
+        let idx = 0;
+        typingEl.textContent = "";
+        const t = setInterval(() => {
+          typingEl.textContent += str[idx++];
+          if (idx >= str.length) {
+            clearInterval(t);
+            resolve();
+          }
+        }, 40); // tốc độ gõ (ms/char)
+      });
+    }
+
+    function eraseText(){
+      return new Promise(resolve => {
+        const t = setInterval(() => {
+          const s = typingEl.textContent;
+          if (s.length === 0) {
+            clearInterval(t);
+            resolve();
+          } else {
+            typingEl.textContent = s.slice(0, -1);
+          }
+        }, 20);
+      });
+    }
+
+    function wait(ms){
+      return new Promise(r => setTimeout(r, ms));
+    }
+
+    // Nếu người dùng muốn bấm thủ công
+    manualBtn.addEventListener('click', () => {
+      // nothing needed; link chuyển bằng href
+    });
+  </script>
+</body>
+</html>
